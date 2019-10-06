@@ -1,0 +1,19 @@
+{
+  "extends": ["tslint:recommended"],
+  "rules": {
+    "quotemark": [true, "single"],
+    "max-classes-per-file": false,
+    "semicolon": true,
+    "no-console": false,
+    "no-bitwise": false,
+    "object-literal-sort-keys": false,
+    "member-ordering": false,
+    "trailing-comma": {
+      "options": {
+        "esSpecCompliant": true,
+        "multiline": "always",
+        "singleline": "never"
+      }
+    }
+  }
+}
