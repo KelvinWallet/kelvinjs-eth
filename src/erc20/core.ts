@@ -33,8 +33,9 @@ export async function getBalance(network: string, token: IToken, addr: string): 
   const contract = new web3.eth.Contract(ERC20_ABI, token.address);
   const balanceBN: BigNumber | null = await contract.methods.balanceOf(addr).call();
 
-  // TODO: FIXME: Convert to normal unit (ETH rather than Wei) before return
-  return !!balanceBN && balanceBN.toString() || '0';
+  const balanceInBaseUnit = !!balanceBN && balanceBN.toString() || '0';
+  const balanceInNormUnit = Common.convertBaseAmountToNormAmount(balanceInBaseUnit);
+  return balanceInNormUnit;
 }
 
 export async function getRecentHistory(network: string, token: IToken, addr: string): Promise<ITransaction[]> {
@@ -105,6 +106,11 @@ export function getPreparedTxSchema(): ITransactionSchema[] {
       label: 'From Address',
     },
     {
+      key: 'value',
+      format: 'value',
+      label: 'Value',
+    },
+    {
       key: 'to',
       format: 'address',
       label: 'To Address',
@@ -113,11 +119,6 @@ export function getPreparedTxSchema(): ITransactionSchema[] {
       key: 'token',
       format: 'address',
       label: 'Token Address',
-    },
-    {
-      key: 'value',
-      format: 'value',
-      label: 'Value',
     },
     {
       key: 'fee',
@@ -158,6 +159,11 @@ export async function prepareCommandSignTx(
   const from = Common.encodePubkeyToAddr(req.network, req.fromPubkey);
   const tokenAddr = ethUtil.toChecksumAddress(token.address);
   const to = ethUtil.toChecksumAddress(req.toAddr);
+
+  if (from === to) {
+    throw Error('sending funds back to the same address is prohibited');
+  }
+
   const nonce = await web3.eth.getTransactionCount(from);
   const value = Common.convertNormAmountToBaseAmount(req.amount);
   const gasLimit = await web3.eth.estimateGas({
@@ -203,6 +209,7 @@ export async function prepareCommandSignTx(
   msg.setTokenAddr(tokenAddrBuffer);
   msg.setRecipientAddr(toBuffer);
   msg.setAmount(valueBuffer);
+  msg.setTokenShortSymbol(Buffer.from(token.symbol, 'utf8'));
   command.setSignErc20Tx(msg);
 
   const armadillCommand: IArmadilloCommand = {

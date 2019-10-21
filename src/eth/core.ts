@@ -21,11 +21,12 @@ import {
   IEtherscanTransactionInput,
 } from '../model/transaction';
 
-export function getBalance(network: string, addr: string): Promise<string> {
+export async function getBalance(network: string, addr: string): Promise<string> {
   const ethNetwork: IEthereumNetwork = Common.getSupportedNetwork(network);
   const web3 = getWeb3(ethNetwork);
-  // TODO: FIXME: Convert to normal unit (ETH rather than Wei) before return
-  return web3.eth.getBalance(addr);
+  const balanceInBaseUnit = await web3.eth.getBalance(addr);
+  const balanceInNormUnit = Common.convertBaseAmountToNormAmount(balanceInBaseUnit);
+  return balanceInNormUnit;
 }
 
 export async function getRecentHistory(network: string, addr: string): Promise<ITransaction[]> {
@@ -95,14 +96,14 @@ export function getPreparedTxSchema(): ITransactionSchema[] {
       label: 'From Address',
     },
     {
-      key: 'to',
-      format: 'address',
-      label: 'To Address',
-    },
-    {
       key: 'value',
       format: 'value',
       label: 'Value',
+    },
+    {
+      key: 'to',
+      format: 'address',
+      label: 'To Address',
     },
     {
       key: 'fee',
@@ -139,6 +140,11 @@ export async function prepareCommandSignTx(req: ISignTxRequest): Promise<[IArmad
 
   const from = Common.encodePubkeyToAddr(req.network, req.fromPubkey);
   const to = ethUtil.toChecksumAddress(req.toAddr);
+
+  if (from === to) {
+    throw Error('sending funds back to the same address is prohibited');
+  }
+
   const nonce = await web3.eth.getTransactionCount(from);
   const value = Common.convertNormAmountToBaseAmount(req.amount);
   const gasLimit = await web3.eth.estimateGas({

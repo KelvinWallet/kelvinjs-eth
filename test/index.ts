@@ -35,8 +35,8 @@ const ethereum = new Ethereum();
 const erc20 = new ERC20();
 
 const token: IToken = {
-  address: '0xB18845c260F680d5B9D84649638813E342E4F8C9',
-  symbol: 'REP',
+  address: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
+  symbol: 'WETH',
 };
 
 erc20.token = token;
@@ -45,6 +45,7 @@ let address: string = '';
 let publicKey: string = '';
 let feeOpts: string[] = [];
 
+/*
 describe('Ethereum Test', async () => {
   it('prepareCommandGetPubkey()', async () => {
     const command = ethereum.prepareCommandGetPubkey(Networks.KOVAN, 0);
@@ -70,7 +71,7 @@ describe('Ethereum Test', async () => {
     const balance = await ethereum.getBalance(Networks.KOVAN, address);
 
     expect(balance).to.be.a('string');
-    console.log(ethereum.convertBaseAmountToNormAmount(balance));
+    console.log('Your balance (in normal unit) is', balance);
   });
 
   it('getFeeOptions()', async () => {
@@ -133,6 +134,7 @@ describe('Ethereum Test', async () => {
     console.log(txhash);
   }).timeout(60000);
 });
+*/
 
 describe('ERC20 Test', async () => {
   it('prepareCommandGetPubkey()', async () => {
@@ -159,7 +161,7 @@ describe('ERC20 Test', async () => {
     const balance = await erc20.getBalance(Networks.KOVAN, address);
 
     expect(balance).to.be.a('string');
-    console.log(erc20.convertBaseAmountToNormAmount(balance));
+    console.log('Your balance (in normal unit) is', balance);
   });
 
   it('getFeeOptions()', async () => {
@@ -186,14 +188,18 @@ describe('ERC20 Test', async () => {
     }
   });
 
+  // In Kovan network
+  // From account 0 (0xFF7886d2441F24c364ca2b6b93E306C1F48ecF12)
+  // Send 0.0001 WETH tokens (0xd0A1E359811322d97991E03f863a0C30C2cF029C)
+  // To account 1 (0xa60F816703fc4B5f897D6cE138dA945Db1820675)
   it('sign & submit tx', async () => {
     const schema = erc20.getPreparedTxSchema();
     const req: ISignTxRequest = {
       network: Networks.KOVAN,
       accountIndex: 0,
-      toAddr: address,
+      toAddr: '0xa60F816703fc4B5f897D6cE138dA945Db1820675', // FIXME: integration test
       fromPubkey: publicKey,
-      amount: '10',
+      amount: '0.0001', // FIXME: integration test
       feeOpt: feeOpts[0],
     };
     const [command, txinfo] = await erc20.prepareCommandSignTx(req);

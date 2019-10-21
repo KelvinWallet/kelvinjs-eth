@@ -1,6 +1,6 @@
 {
   "name": "kelvinjs-eth",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "kelvinjs-eth",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -8,7 +8,7 @@
     "lib"
   ],
   "engines": {
-    "node": ">=10.0.0"
+    "node": "^10.0.0"
   },
   "repository": {
     "type": "git",
@@ -25,7 +25,7 @@
   "devDependencies": {
     "@types/chai": "^4.2.3",
     "@types/mocha": "^5.2.7",
-    "@types/node": "^10.14.20",
+    "@types/node": "^10.0.0",
     "chai": "^4.2.0",
     "kelvinjs-usbhid": "git+https://github.com/KelvinWallet/kelvinjs-usbhid.git#v1.0.0",
     "mocha": "^6.2.0",
