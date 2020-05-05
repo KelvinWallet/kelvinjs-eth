@@ -954,9 +954,9 @@ keccak@^1.0.2:
     "@types/google-protobuf" "3.7.2"
     google-protobuf "3.10.0"
 
-"kelvinjs-usbhid@git+https://github.com/KelvinWallet/kelvinjs-usbhid.git#v1.0.1":
-  version "1.0.1"
-  resolved "git+https://github.com/KelvinWallet/kelvinjs-usbhid.git#9de4bd8df8bf4a803b9d884f1dbd1898221750bf"
+"kelvinjs-usbhid@git+https://github.com/KelvinWallet/kelvinjs-usbhid.git#v1.0.3":
+  version "1.0.3"
+  resolved "git+https://github.com/KelvinWallet/kelvinjs-usbhid.git#64dbd2a685e9761d56094f01ff4738d68cb37b91"
   dependencies:
     "@types/node-hid" "0.7.3"
     node-hid "0.7.9"
